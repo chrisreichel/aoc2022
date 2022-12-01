@@ -4,7 +4,6 @@ const allFileContents = fs.readFileSync("input.txt", 'utf8');
 
 let elves = []
 
-var biggest = 0;
 var temp_acc = 0;
 var index = 1;
 
