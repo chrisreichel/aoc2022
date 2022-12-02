@@ -3,5 +3,5 @@
 | Day                       |Link                                                       |
 |---------------------------|-----------------------------------------------------------|
 |[01/](../../tree/main/01)  |[Day one](https://adventofcode.com/2022/day/1)             |
-|02/                  |[Day two](https://adventofcode.com/2022/day/2)            |
+|[02/](../../tree/main/02)  |[Day two](https://adventofcode.com/2022/day/2)             |
 
