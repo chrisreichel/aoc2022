@@ -27,12 +27,10 @@ sub calculate_findings{
     my $searches_size = @array_of_searches;
 
     my ($searcheable,$on_string_content) = ($array_of_searches[0], $array_of_searches[1]);
-
-    my $sum_of_priorities = 0;
-
     my @searcheable_letters = split //, $searcheable;
     my @content = split //, $on_string_content;
 
+    my $sum_of_priorities = 0;
     my %found;
     for(@searcheable_letters){
         my $letter = $_;
@@ -43,13 +41,12 @@ sub calculate_findings{
         }
     }
 
-    if($searches_size == 2){
-        return $sum_of_priorities;
-    }
-    else{
+    unless($searches_size == 2){
         my $found_letters = join ('', ( keys %found ));
         return calculate_findings($found_letters, $array_of_searches[2]);
+        
     }
+    return $sum_of_priorities;
 }
 
 
