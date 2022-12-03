@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 OPONENT_ROCK = "A"
 OPONENT_PAPER = "B"

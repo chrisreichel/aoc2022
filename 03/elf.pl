@@ -17,16 +17,18 @@ for(((65..90),(97..122))){
         $priority  = $ascii_val - 70 - 26;
     }
     $letter_values{$char} = $priority;
-    #print("ASCII $ascii_val is char: $char with elf priority $priority\n");
 }
 
-my $filename = 'sample.txt';
+my $filename = 'input.txt';
 
 open(FH, '<', $filename) or die $!;
 
 sub calculate_findings{
 
-    my ($searcheable,$on_string_content) = @_;
+    my @array_of_searches = @_;
+    my $searches_size = @array_of_searches;
+
+    my ($searcheable,$on_string_content) = ($array_of_searches[0], $array_of_searches[1]);
 
     my $sum_of_priorities = 0;
 
@@ -37,32 +39,48 @@ sub calculate_findings{
     for(@searcheable_letters){
         my $letter = $_;
         if ( !$found{$letter} && grep( /^$letter$/, @content ) ) {
-            my $p = $letter_values{$letter};
-            $sum_of_priorities += $p;
-            $found{$letter} = 1;
-            #print "found $letter with value $p on ";
+                my $p = $letter_values{$letter};
+                $sum_of_priorities += $p;
+                $found{$letter} = 1;
         }
     }
-    return $sum_of_priorities;
+
+    if($searches_size == 2){
+        return $sum_of_priorities;
+    }
+    else{
+        my $found_letters = join ('', ( keys %found ));
+        return calculate_findings($found_letters, $array_of_searches[2]);
+    }
 }
 
 
-my $sum_of_priorities=0;
+my $sum_of_priorities_part1=0;
+my $sum_of_priorities_part2=0;
+my $control_idx = 0;
+my @temp_acc = ();
 while(<FH>){
+    $control_idx++;
     my $line = $_;
     chomp $line;
     my $line_size = length $line;
 
-    my $first_half = substr $line, 0, ($line_size/2);
-    my $second_half = substr $line, ($line_size/2), $line_size;
+    my $first_half_part1 = substr $line, 0, ($line_size/2);
+    my $second_half_part1 = substr $line, ($line_size/2), $line_size;
 
-    $sum_of_priorities += calculate_findings($first_half, $second_half);
+    $sum_of_priorities_part1 += calculate_findings($first_half_part1, $second_half_part1);
 
-    #print("line $line size of $line_size - parts: $first_half and $second_half - priorities $sum_of_priorities\n");
-
+    if($control_idx % 3 == 0){
+        push(@temp_acc, $line);
+        $sum_of_priorities_part2 += calculate_findings(@temp_acc);
+        @temp_acc = ();
+    } else {
+        push(@temp_acc, $line);
+    }
 }
 close(FH);
 
-print "First part $sum_of_priorities\n";
+print "First part $sum_of_priorities_part1\n";
+print "Second part $sum_of_priorities_part2\n";
 
 
