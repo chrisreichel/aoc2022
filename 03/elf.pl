@@ -19,9 +19,7 @@ for(((65..90),(97..122))){
     $letter_values{$char} = $priority;
 }
 
-my $filename = 'input.txt';
-
-open(FH, '<', $filename) or die $!;
+open(FH, '<', 'input.txt') or die $!;
 
 sub calculate_findings{
 
@@ -78,7 +76,7 @@ while(<FH>){
         push(@temp_acc, $line);
     }
 }
-close(FH);
+close(FH) or warn "Can't close file";
 
 print "First part $sum_of_priorities_part1\n";
 print "Second part $sum_of_priorities_part2\n";
