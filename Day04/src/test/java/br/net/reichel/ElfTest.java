@@ -68,7 +68,10 @@ class ElfTest {
 
     @Test
     public void shouldPartiallyOverlap(){
-
+        assertTrue(elf.hasPartialOverlap(Range.closed(5, 7), Range.closed(7, 9)));
+        assertTrue(elf.hasPartialOverlap(Range.closed(2, 8), Range.closed(3, 7)));
+        assertTrue(elf.hasPartialOverlap(Range.closed(6, 6), Range.closed(4, 6)));
+        assertTrue(elf.hasPartialOverlap(Range.closed(2, 6), Range.closed(4, 8)));
     }
 
 }
