@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElfTest {
 
@@ -34,7 +35,7 @@ class ElfTest {
     }
 
     @Test
-    public void shouldParseLine1(){
+    public void shouldParseLine1() {
         final String[] tokens = elf.parseLine("21-86,19-70");
         assertEquals("21", tokens[0]);
         assertEquals("86", tokens[1]);
@@ -43,7 +44,7 @@ class ElfTest {
     }
 
     @Test
-    public void shouldParseLine2(){
+    public void shouldParseLine2() {
         final String[] tokens = elf.parseLine("121-67890,1-7000");
         assertEquals("121", tokens[0]);
         assertEquals("67890", tokens[1]);
@@ -52,13 +53,13 @@ class ElfTest {
     }
 
     @Test
-    public void shouldGetRange(){
-        assertEquals("[1..4]", elf.generateRange( 1, 4).toString() );
-        assertEquals("[4..4]", elf.generateRange( 4, 4).toString() );
+    public void shouldGetRange() {
+        assertEquals("[1..4]", elf.generateRange(1, 4).toString());
+        assertEquals("[4..4]", elf.generateRange(4, 4).toString());
     }
 
     @Test
-    public void shouldContainFullOverlap(){
+    public void shouldContainFullOverlap() {
         assertTrue(elf.hasFullOverlap(Range.closed(1, 4), Range.closed(4, 4)));
         assertTrue(elf.hasFullOverlap(Range.closed(4, 4), Range.closed(1, 4)));
         assertTrue(elf.hasFullOverlap(Range.closed(1, 10), Range.closed(2, 8)));
@@ -67,7 +68,7 @@ class ElfTest {
     }
 
     @Test
-    public void shouldPartiallyOverlap(){
+    public void shouldPartiallyOverlap() {
         assertTrue(elf.hasPartialOverlap(Range.closed(5, 7), Range.closed(7, 9)));
         assertTrue(elf.hasPartialOverlap(Range.closed(2, 8), Range.closed(3, 7)));
         assertTrue(elf.hasPartialOverlap(Range.closed(6, 6), Range.closed(4, 6)));

@@ -4,7 +4,10 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,14 +30,14 @@ public class Elf {
                 final Range<Integer> leftElfRange = generateRange(tokens[0], tokens[1]);
                 final Range<Integer> rightElfRange = generateRange(tokens[2], tokens[3]);
 
-                if(hasFullOverlap(leftElfRange, rightElfRange)){
+                if (hasFullOverlap(leftElfRange, rightElfRange)) {
                     numOfFullOverlaps++;
                 }
-                if(hasPartialOverlap(leftElfRange, rightElfRange)){
+                if (hasPartialOverlap(leftElfRange, rightElfRange)) {
                     numOfPartialOverlaps++;
                 }
             }
-            System.out.println("Full overlaps: "+ numOfFullOverlaps + " and partial overlaps: " + numOfPartialOverlaps);
+            System.out.println("Full overlaps: " + numOfFullOverlaps + " and partial overlaps: " + numOfPartialOverlaps);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -49,12 +52,12 @@ public class Elf {
         return new OverlappingSectionResponse(numOfFullOverlaps, numOfPartialOverlaps);
     }
 
-    public String[] parseLine(String line){
+    public String[] parseLine(String line) {
         final String[] tokens = new String[4];
         final Pattern pattern = Pattern.compile(REGEX);
         final Matcher matcher = pattern.matcher(line);
-        if (matcher.find( )) {
-            for(int i=0; i<tokens.length; i++){
+        if (matcher.find()) {
+            for (int i = 0; i < tokens.length; i++) {
                 tokens[i] = matcher.group(i + 1);
             }
         } else {
@@ -63,12 +66,12 @@ public class Elf {
         return tokens;
     }
 
-    public Range<Integer> generateRange(String lower, String upper){
+    public Range<Integer> generateRange(String lower, String upper) {
         return generateRange(Integer.parseInt(lower), Integer.parseInt(upper));
     }
 
-    public Range<Integer> generateRange(Integer lower, Integer upper){
-        return  Range.closed(lower, upper);
+    public Range<Integer> generateRange(Integer lower, Integer upper) {
+        return Range.closed(lower, upper);
     }
 
     public boolean hasFullOverlap(Range<Integer> firstElfRange, Range<Integer> secondElfRange) {
