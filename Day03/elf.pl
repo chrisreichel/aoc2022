@@ -41,7 +41,7 @@ sub calculate_findings{
         }
     }
 
-    #Oh Perl...
+
     return calculate_findings(join ('', ( keys %found )), $array_of_searches[2]) unless $searches_size == 2;
     return $sum_of_priorities;
 }
