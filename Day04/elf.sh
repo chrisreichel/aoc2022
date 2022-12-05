@@ -5,29 +5,42 @@ FILE=input.txt
 num_of_fully_overlaps=0
 num_of_partial_overlaps=0
 
+is_fully_overlaped () {
+    if ([ $1 -le $3 ] && [ $2 -ge $4 ] ) || ( [ $3 -le $1 ] && [ $4 -ge $2 ] )
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+is_partially_overlaped () {
+    #echo "Is partially overlaps? $1 $2  compared to $3 $4"
+    if ([ $3 -ge $1 ] && [ $3 -le $2 ]) || ( [ $4 -ge $1 ] && [ $4 -le $2 ])
+    then
+        return 0
+    elif ([ $1 -ge $3 ] && [ $1 -le $4 ]) || ([ $2 -ge $3 ] && [ $2 -le $4 ])
+    then    
+        return 0
+    else
+        return 1
+    fi
+}
+
 for line in `cat $FILE | sed 's/,/-/g'`; do
     arrSECTIONS=(${line//-/ })
-    first_sequence=$(seq -s ' ' ${arrSECTIONS[0]} ${arrSECTIONS[1]} | sed 's/ *$//g')
-    second_sequence=$(seq -s ' ' ${arrSECTIONS[2]} ${arrSECTIONS[3]} | sed 's/ *$//g')
-    first_sequence_array=($first_sequence)
-    second_sequence_array=($second_sequence)
-    size_of_if_no_overlap=$((${#first_sequence_array[@]} + ${#second_sequence_array[@]}))
-    full=$(echo "$first_sequence $second_sequence")
-    sorted=$(echo $full | xargs -n1 | sort | uniq | xargs)
-    sorted_array=($sorted)
-    result="none"
-    if [ ${#first_sequence_array[@]} -eq  ${#sorted_array[@]} ] || [ ${#second_sequence_array[@]} -eq  ${#sorted_array[@]} ]
+    is_fully_overlaped ${arrSECTIONS[0]} ${arrSECTIONS[1]} ${arrSECTIONS[2]} ${arrSECTIONS[3]}
+    is_full=$?
+    is_partially_overlaped ${arrSECTIONS[0]} ${arrSECTIONS[1]} ${arrSECTIONS[2]} ${arrSECTIONS[3]}
+    is_partially=$?
+    if [  $is_full -eq 0 ] 
     then
         num_of_fully_overlaps=$((num_of_fully_overlaps+1))
         num_of_partial_overlaps=$((num_of_partial_overlaps+1))
-        result="FULLY_OVERLAP"
-    elif [  ${#sorted_array[@]} -lt $size_of_if_no_overlap ]
+    elif [  $is_partially  -eq 0 ]
     then
         num_of_partial_overlaps=$((num_of_partial_overlaps+1))
-        result="PARTIAL_OVERLAP"
     fi
-    #echo "${arrSECTIONS[0]}-${arrSECTIONS[1]},${arrSECTIONS[2]}-${arrSECTIONS[3]}:$result"
-    #echo "--"
 done
 
 echo "Full overlaps: $num_of_fully_overlaps"
