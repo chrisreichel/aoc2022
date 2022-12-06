@@ -23,7 +23,13 @@ public class Elf {
 
     public final static int STG_MOVEMENTS = 4;
 
-    public void processCraneFile(String fileName) {
+    private final int version;
+
+    public Elf(int version){
+        this.version = version;
+    }
+
+    public String processCraneFile(String fileName) {
         BufferedReader objReader = null;
 
         final Map<Integer, Stack<String>> loadBay = new HashMap();
@@ -53,26 +59,40 @@ public class Elf {
                         //debugLoadBay(loadBay);
                         break;
                     case STG_STACK_NAMES:
-                        System.out.println("reading stack names and fixing stacks");
-                        debug(loadBay);
-                        loadBay.entrySet().stream().forEach(stackEntry -> {
-                            final Stack<String> originalQueued = stackEntry.getValue();
+                        //System.out.println("reading stack names and fixing stacks");
+                        //debug(loadBay);
+                        for(Integer key : loadBay.keySet()) {
+                            final Stack<String> loadedPile = loadBay.get(key);
+                            //System.out.println("Reverting: " + key + " size of loadedBay: " + loadedPile.size());
                             final Stack<String> piledCorrectly = new Stack<>();
-                            originalQueued.stream().forEach(s -> piledCorrectly.push(s));
-                            stacks.put(stackEntry.getKey(), piledCorrectly);
-                        });
+                            final int size = loadedPile.size();
+                            for (int i = 0; i < size; i++) {
+                                final String s = loadedPile.pop();
+                                //System.out.println("      poped " + s + " will push ;");
+                                piledCorrectly.push(s);
+                            }
+                            stacks.put(key, piledCorrectly);
+                            //System.out.println("--- topo da stack: " + piledCorrectly.peek());
+                        }
                         //debug(stacks);
                         break;
                     case STG_MOVEMENTS:
-                        System.out.println("Lendo os movimentos: " + strCurrentLine);
+                        //System.out.println("COMANDO: " + strCurrentLine);
                         final Integer[] movement = parseMovement(strCurrentLine);
                         final Integer numOfCrates = movement[0];
                         final Stack<String> stackSource = stacks.getOrDefault(movement[1], new Stack<>());
                         final Stack<String> stackDestiny = stacks.getOrDefault(movement[2], new Stack<>());
-                        for(int i = 0; i < numOfCrates; i++){
-                            final String crate = stackSource.pop();
-                            stackDestiny.push(crate);
+                        if(version == 9000 || numOfCrates == 1){
+                            moveCrates(numOfCrates, stackSource, stackDestiny);
                         }
+                        else{
+                            final Stack<String> tempstack = new Stack<>();
+                            //System.out.println("   * mov temp *");
+                            moveCrates(numOfCrates, stackSource, tempstack);
+                            //System.out.println("   * ajuste *");
+                            moveCrates(numOfCrates, tempstack, stackDestiny);
+                        }
+                        //System.out.println("--");
                         //debug(stacks);
                         break;
                     default:
@@ -93,16 +113,38 @@ public class Elf {
                 ex.printStackTrace();
             }
         }
-        debug(stacks);
+        final String answer = peek(stacks);
+        System.out.println("Resposta: " + answer);
 
+        return answer;
+    }
+
+    public void moveCrates(int numOfCrates, Stack<String> stackSource, Stack<String> stackDestiny){
+        //System.out.println("       started: " + stackSource + " and " + stackDestiny);
+        for(int i = 0; i < numOfCrates; i++){
+            final String crate = stackSource.pop();
+            //System.out.println("         -> mov: " + crate+ " from " + stackSource + " to " + stackDestiny+ " ");
+            stackDestiny.push(crate);
+        }
+        //System.out.println("       ended : " + stackSource + " and " + stackDestiny);
+    }
+
+    public String peek(Map<Integer, Stack<String>> stacks){
+        final StringBuffer buffer = new StringBuffer();
+        stacks.entrySet().stream().forEach(entry -> {
+            //System.out.println("       -> " + entry.getKey() + " (topo da pilha: " + entry.getValue().peek() + " )");
+            buffer.append(entry.getValue().peek());
+        });
+        //System.out.println("----------- ");
+        return buffer.toString();
     }
 
     public void debug(Map<Integer, Stack<String>> stacks){
         stacks.entrySet().stream().forEach(entry -> {
-            System.out.print("\n\r -> " + entry.getKey());
+            System.out.print("\n\r -> " + entry.getKey() + " (topo da pilha: " + entry.getValue().peek() + " )");
             entry.getValue().stream().forEach(s -> System.out.print(" ["+ s +"]"));
         });
-        System.out.println("\n\r-----------");
+        System.out.println("\n\r----------- ");
     }
 
     public void debugLoadBay(Map<Integer, Queue<String>> loadBay){

@@ -12,11 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ElfTest {
-
-    private final Elf elf = new Elf();
-
     @Test
     public void shouldMatchFirstStageParsing(){
+        final Elf elf = new Elf(9000);
         assertEquals(1, elf.getParseStage("        [X]"));
         assertEquals(1, elf.getParseStage("    [C] [X]"));
         assertEquals(1, elf.getParseStage("    [D]    "));
@@ -28,17 +26,20 @@ class ElfTest {
 
     @Test
     public void shouldMatchSecondStageParsing(){
+        final Elf elf = new Elf(9000);
         assertEquals(2, elf.getParseStage(" 1   2   3   4   5   6   7   8   9 "));
         assertEquals(2, elf.getParseStage(" 1   2   3 "));
     }
 
     @Test
     public void shouldMatchThirdStageParsing(){
+        final Elf elf = new Elf(9000);
         assertEquals(3, elf.getParseStage(""));
     }
 
     @Test
     public void shouldMatchForthStageParsing(){
+        final Elf elf = new Elf(9000);
         assertEquals(4, elf.getParseStage("move 6 from 9 to 3"));
         assertEquals(4, elf.getParseStage("move 1 from 2 to 1"));
         assertEquals(4, elf.getParseStage("move 32 from 3 to 5"));
@@ -46,6 +47,7 @@ class ElfTest {
 
     @Test
     public void shouldGetNumOfPiles(){
+        final Elf elf = new Elf(9000);
         assertEquals(3, elf.getNumOfPiles("        [X]"));
         assertEquals(3, elf.getNumOfPiles("    [C] [X]"));
         assertEquals(3, elf.getNumOfPiles("    [D]    "));
@@ -57,6 +59,7 @@ class ElfTest {
 
     @Test
     public void shouldGetValuesOnPositionsLast(){
+        final Elf elf = new Elf(9000);
         final Map<Integer, String> r1 = elf.getPositionedValues("        [X]");
         assertEquals(1, r1.size());
         assertEquals("X", r1.get(3));
@@ -78,7 +81,26 @@ class ElfTest {
     }
 
     @Test
-    public void shouldRunSimple() {
-        elf.processCraneFile("sample.txt");
+    public void shouldRunSamplePart1() {
+        final Elf elf = new Elf(9000);
+        assertEquals("CMZ", elf.processCraneFile("sample.txt"));
+    }
+
+    @Test
+    public void shouldRunFullPart1() {
+        final Elf elf = new Elf(9000);
+        assertEquals("FCVRLMVQP", elf.processCraneFile("input.txt"));
+    }
+
+    @Test
+    public void shouldRunSamplePart2() {
+        final Elf elf = new Elf(9001);
+        assertEquals("MCD", elf.processCraneFile("sample.txt"));
+    }
+
+    @Test
+    public void shouldRunFullPart2() {
+        final Elf elf = new Elf(9001);
+        assertEquals("RWLWGJGFD", elf.processCraneFile("input.txt"));
     }
 }
